@@ -17,6 +17,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/geojson', express.static(path.join(__dirname, '../vietnam/json/geojson')));
 app.use('/geojson-data', express.static(path.join(__dirname, '../vietnam/json')));
 
+// Phục vụ favicon.ico trực tiếp
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/images/favicon.ico/favicon.ico'));
+});
+
 // Middleware giúp xử lý dữ liệu gửi lên từ Form và JSON từ Client
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
