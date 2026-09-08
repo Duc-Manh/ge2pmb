@@ -1025,7 +1025,7 @@ function initLoginModal() {
 
 // --- 14. INTERACTIVE 3D CARD TILT PHYSICS ENGINE ---
 function initCardTilt() {
-  const tiltCards = document.querySelectorAll('.hero-image-card, .service-card, .project-card, .contact-studio-card');
+  const tiltCards = document.querySelectorAll('.hero-image-card, .project-card, .contact-studio-card');
   tiltCards.forEach(card => {
     card.style.transformStyle = 'preserve-3d';
     card.style.transition = 'transform 0.15s ease-out, box-shadow 0.3s ease';
