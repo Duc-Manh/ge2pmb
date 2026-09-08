@@ -1438,12 +1438,13 @@ a {
   .contact-split-grid {
     grid-template-columns: 1fr;
     gap: 40px;
+    max-width: 92vw;
   }
 
   .projects-grid,
   .services-grid,
   .footer-container {
-    grid-template-cols: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .featured-inset-card {
@@ -1460,14 +1461,20 @@ a {
 }
 
 @media (max-width: 768px) {
+  .hero-container {
+    max-width: 95vw;
+    padding: 0 10px;
+  }
+
   .projects-grid,
   .services-grid,
   .footer-container {
-    grid-template-cols: 1fr;
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 
-  .nav-menu {
-    display: none;
+  .hero-image-card {
+    height: 360px;
   }
 
   .brand-logos-row {
@@ -1477,7 +1484,12 @@ a {
   }
 
   .hero-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
+    line-height: 1.25;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
   }
 }
 
