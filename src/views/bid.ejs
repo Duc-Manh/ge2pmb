@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Đấu thầu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/tailwind.min.css?v=<%= Date.now() %>">
+  <link rel="stylesheet" href="/css/bid.css?v=<%= Date.now() %>">
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+  <!-- Navbar -->
+  <nav class="bg-white shadow-sm border-b border-slate-200 fixed w-full z-20 top-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <a href="/board"
+            class="text-evnBlue hover:text-orange-600 transition-colors flex items-center gap-1 font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                clip-rule="evenodd" />
+            </svg>
+            Quay lại Hub
+          </a>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <span class="font-bold text-lg text-evnBlue">Phân hệ Hồ sơ Đấu thầu</span>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <!-- Notifications -->
+          <button
+            class="text-slate-400 hover:text-evnOrange transition-colors relative <%= typeof pendingCount !== 'undefined' && pendingCount > 0 ? 'animate-wiggle text-evnOrange' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <% if (typeof pendingCount !=='undefined' && pendingCount> 0) { %>
+              <span class="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-evnOrange opacity-75"></span>
+                <span
+                  class="relative inline-flex rounded-full h-4 w-4 bg-evnOrange border-2 border-white items-center justify-center text-[9px] font-bold text-white leading-none">
+                  <%= pendingCount> 99 ? '99+' : pendingCount %>
+                </span>
+              </span>
+              <% } %>
+          </button>
+
+          <!-- User Profile Dropdown -->
+          <div class="relative group cursor-pointer">
+            <div class="flex items-center gap-2 border-l pl-6 border-slate-200">
+
+              <div class="hidden sm:block text-left">
+                <p class="text-sm font-semibold text-slate-700 leading-tight">
+                  <%= user.full_name %>
+                </p>
+                <p class="text-xs text-slate-500 leading-tight">Admin</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 text-slate-400 group-hover:text-evnBlue transition-colors" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
+            <!-- Dropdown Menu -->
+            <div
+              class="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0 z-50">
+              <div class="p-2 space-y-1">
+                <a href="#"
+                  class="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-evnBlue rounded-lg transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Hồ sơ cá nhân
+                </a>
+                <a href="#"
+                  class="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-evnBlue rounded-lg transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Cài đặt hệ thống
+                </a>
+                <div class="h-px bg-slate-100 my-2"></div>
+                <a href="/logout"
+                  class="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Đăng xuất
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
+    <!-- Header & Actions -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl font-extrabold text-evnBlue tracking-tight">Quản lý Đấu thầu</h1>
+        <p class="text-sm text-evnBlue mt-1">Quản lý các gói thầu, văn bản pháp lý và tiến trình lựa chọn nhà thầu.</p>
+      </div>
+      <div class="flex items-center gap-3 w-full md:w-auto">
+        <div class="relative flex-grow md:flex-grow-0">
+          <input type="text" placeholder="Tìm kiếm gói thầu..."
+            class="w-full md:w-64 pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm shadow-sm focus:outline-none focus:border-evnBlue focus:ring-1 focus:ring-evnBlue transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 absolute left-3 top-2.5" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <button
+          class="bg-evnBlue hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl shadow-md shadow-blue-500/20 hover:shadow-orange-500/30 text-sm font-semibold transition-all duration-300 flex items-center gap-2 whitespace-nowrap">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span class="hidden sm:inline">Tạo gói thầu mới</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Stat 1 -->
+      <div
+        class="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden group cursor-pointer">
+        <div
+          class="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-blue-100/50 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110">
+        </div>
+        <div class="relative z-10 flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-slate-500 mb-1">Tổng gói thầu</p>
+            <h3 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-evnBlue to-blue-500">
+              35</h3>
+          </div>
+          <div
+            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:rotate-12 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-emerald-600 font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+          +5 tháng này
+        </div>
+      </div>
+
+      <!-- Stat 2 -->
+      <div
+        class="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden group cursor-pointer">
+        <div
+          class="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-orange-100/50 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110">
+        </div>
+        <div class="relative z-10 flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-slate-500 mb-1">Đang mời thầu</p>
+            <h3
+              class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500">
+              15</h3>
+          </div>
+          <div
+            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:rotate-12 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-slate-500">
+          Chờ đóng thầu
+        </div>
+      </div>
+
+      <!-- Stat 3 -->
+      <div
+        class="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden group cursor-pointer">
+        <div
+          class="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-emerald-100/50 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110">
+        </div>
+        <div class="relative z-10 flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-slate-500 mb-1">Đang chấm thầu</p>
+            <h3
+              class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">
+              8</h3>
+          </div>
+          <div
+            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:rotate-12 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-slate-500">
+          Chờ báo cáo đánh giá
+        </div>
+      </div>
+
+      <!-- Stat 4 -->
+      <div
+        class="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden group cursor-pointer">
+        <div
+          class="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-rose-100/50 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110">
+        </div>
+        <div class="relative z-10 flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-slate-500 mb-1">Hủy thầu</p>
+            <h3 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-red-600">
+              2</h3>
+          </div>
+          <div
+            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:rotate-12 transition-transform duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-red-600 font-medium">
+          Cần xem xét lại
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+      <button class="px-4 py-1.5 rounded-full bg-evnBlue text-white text-sm font-medium shadow-sm whitespace-nowrap">Tất
+        cả gói thầu</button>
+      <button
+        class="px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-medium transition-colors whitespace-nowrap">Đang
+        mời thầu</button>
+      <button
+        class="px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-medium transition-colors whitespace-nowrap">Đang
+        chấm thầu</button>
+      <button
+        class="px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-medium transition-colors whitespace-nowrap">Đã
+        phê duyệt</button>
+    </div>
+
+    <!-- Projects Table -->
+    <div class="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-xl overflow-hidden mb-8">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-sm font-semibold text-slate-600">
+              <th class="px-6 py-4 whitespace-nowrap">Tên gói thầu</th>
+              <th class="px-6 py-4 whitespace-nowrap">Hình thức & Phương thức</th>
+              <th class="px-6 py-4 whitespace-nowrap">Trạng thái</th>
+              <th class="px-6 py-4 whitespace-nowrap">Ngày đóng thầu</th>
+              <th class="px-6 py-4 whitespace-nowrap text-right">Chi tiết</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-sm">
+            <!-- Bid 1 -->
+            <tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+              <td class="px-6 py-4">
+                <div class="font-bold text-slate-800 group-hover:text-evnBlue transition-colors line-clamp-1">Gói thầu
+                  số 1: Mua sắm thiết bị</div>
+                <div class="text-xs text-slate-500 mt-1 line-clamp-1">Thuộc dự án Nhà máy Thủy điện Sông Bung 4</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="font-medium text-slate-700">Đấu thầu rộng rãi</div>
+                <div class="text-xs text-slate-500 mt-1">1 giai đoạn 2 túi hồ sơ</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-evnBlue border border-blue-100">
+                  <span class="w-1.5 h-1.5 rounded-full bg-evnBlue animate-pulse"></span>
+                  Đang mời thầu
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-slate-600 font-medium">20/08/2026</div>
+                <div class="text-xs text-evnBlue mt-1">Còn 41 ngày</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right">
+                <button
+                  class="px-3 py-1.5 bg-blue-50 text-evnBlue hover:bg-evnBlue hover:text-white rounded-lg text-xs font-semibold transition-colors shadow-sm">
+                  Xem
+                </button>
+              </td>
+            </tr>
+
+            <!-- Bid 2 -->
+            <tr class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+              <td class="px-6 py-4">
+                <div class="font-bold text-slate-800 group-hover:text-evnOrange transition-colors line-clamp-1">Gói thầu
+                  số 2: Tư vấn giám sát</div>
+                <div class="text-xs text-slate-500 mt-1 line-clamp-1">Thuộc dự án Nhiệt điện Hải Phòng 3</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="font-medium text-slate-700">Chỉ định thầu</div>
+                <div class="text-xs text-slate-500 mt-1">Rút gọn</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-orange-50 text-evnOrange border border-orange-100">
+                  <span class="w-1.5 h-1.5 rounded-full bg-evnOrange animate-pulse"></span>
+                  Đang chấm thầu
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-slate-600 font-medium">15/07/2026</div>
+                <div class="text-xs text-orange-600 mt-1">Đã đóng thầu</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right">
+                <button
+                  class="px-3 py-1.5 bg-blue-50 text-evnBlue hover:bg-evnBlue hover:text-white rounded-lg text-xs font-semibold transition-colors shadow-sm">
+                  Xem
+                </button>
+              </td>
+            </tr>
+
+            <!-- Bid 3 -->
+            <tr class="hover:bg-red-50/50 transition-colors group cursor-pointer bg-red-50/20">
+              <td class="px-6 py-4">
+                <div class="font-bold text-slate-800 group-hover:text-red-600 transition-colors line-clamp-1">Gói thầu
+                  số 3: Thi công xây lắp</div>
+                <div class="text-xs text-slate-500 mt-1 line-clamp-1">Thuộc dự án Điện mặt trời Thác Mơ</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="font-medium text-slate-700">Chào hàng cạnh tranh</div>
+                <div class="text-xs text-slate-500 mt-1">1 giai đoạn 1 túi hồ sơ</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                  Đã phê duyệt
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-slate-600 font-medium">10/06/2026</div>
+                <div class="text-xs text-emerald-600 mt-1">Đã kết thúc</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right">
+                <button
+                  class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg text-xs font-semibold transition-colors shadow-sm">
+                  Xem
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Expanded Tracking Sections -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+
+      <!-- Left Column: Tasks & Budget -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Tasks Section -->
+        <div
+          class="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-slate-800">Nhiệm vụ Đấu thầu trọng tâm</h3>
+            <button class="text-sm font-medium text-evnBlue hover:text-orange-600 transition-colors">Xem tất cả</button>
+          </div>
+          <div class="space-y-4">
+            <!-- Task 1 -->
+            <div
+              class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-blue-50/50 transition-colors group cursor-pointer">
+              <input type="checkbox"
+                class="mt-1 w-5 h-5 rounded border-slate-300 text-evnBlue focus:ring-evnBlue cursor-pointer">
+              <div class="flex-grow">
+                <p class="font-semibold text-slate-700 group-hover:text-evnBlue transition-colors">Duyệt hồ sơ mời thầu
+                  gói số 4</p>
+                <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                  <span class="flex items-center gap-1 text-red-500 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Hôm nay
+                  </span>
+                  <span>•</span>
+                  <span>Thủy điện Sông Bung 4</span>
+                </div>
+              </div>
+              <div
+                class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-xs font-bold text-evnOrange border border-white shadow-sm">
+                H</div>
+            </div>
+
+            <!-- Task 2 -->
+            <div
+              class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-blue-50/50 transition-colors group cursor-pointer">
+              <input type="checkbox"
+                class="mt-1 w-5 h-5 rounded border-slate-300 text-evnBlue focus:ring-evnBlue cursor-pointer">
+              <div class="flex-grow">
+                <p class="font-semibold text-slate-700 group-hover:text-evnBlue transition-colors">Đánh giá hồ sơ dự
+                  thầu gói số 2</p>
+                <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                  <span class="flex items-center gap-1 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    12/08/2026
+                  </span>
+                  <span>•</span>
+                  <span>NĐ Hải Phòng 3</span>
+                </div>
+              </div>
+              <div
+                class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-evnBlue border border-white shadow-sm">
+                T</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget & Resource -->
+        <div
+          class="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-slate-800">Ngân sách các gói thầu</h3>
+            <button class="text-slate-400 hover:text-evnBlue transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            </button>
+          </div>
+          <div class="space-y-6">
+            <!-- Budget 1 -->
+            <div>
+              <div class="flex justify-between text-sm mb-2">
+                <span class="font-semibold text-slate-700">Gói thầu số 1: Mua sắm thiết bị</span>
+                <span class="font-bold text-slate-800">45.5 Tỷ / 120 Tỷ</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-3">
+                <div class="bg-gradient-to-r from-evnBlue to-blue-400 h-3 rounded-full" style="width: 38%"></div>
+              </div>
+            </div>
+            <!-- Budget 2 -->
+            <div>
+              <div class="flex justify-between text-sm mb-2">
+                <span class="font-semibold text-slate-700">Gói thầu số 3: Thi công xây lắp</span>
+                <span class="font-bold text-red-600">80 Tỷ / 85 Tỷ (Cảnh báo vượt)</span>
+              </div>
+              <div class="w-full bg-red-100 rounded-full h-3">
+                <div class="bg-gradient-to-r from-red-600 to-red-400 h-3 rounded-full" style="width: 94%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Timeline -->
+      <div
+        class="bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg p-6 h-full flex flex-col hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+        <h3 class="text-lg font-bold text-slate-800 mb-6">Tiến trình Đấu thầu</h3>
+        <div class="relative pl-4 border-l-2 border-slate-100 space-y-8 flex-grow">
+
+          <!-- Activity 1 -->
+          <div class="relative">
+            <span
+              class="absolute -left-[21px] top-1 w-3 h-3 bg-white border-2 border-evnBlue rounded-full shadow-sm"></span>
+            <p class="text-sm font-semibold text-slate-700">Nguyễn Văn A <span class="font-normal text-slate-500">đã cập
+                nhật tài liệu</span></p>
+            <p
+              class="text-sm text-evnBlue mt-1.5 font-medium bg-blue-50 inline-block px-2.5 py-1 rounded-md border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Hồ sơ mời thầu v2.pdf
+            </p>
+            <span class="block text-xs text-slate-400 mt-2">2 giờ trước</span>
+          </div>
+
+          <!-- Activity 2 -->
+          <div class="relative">
+            <span
+              class="absolute -left-[21px] top-1 w-3 h-3 bg-white border-2 border-emerald-500 rounded-full shadow-sm"></span>
+            <p class="text-sm font-semibold text-slate-700">Gói thầu số 2</p>
+            <p class="text-sm text-slate-500 mt-1">Đã hoàn thành cột mốc <span
+                class="font-medium text-slate-700 bg-emerald-50 px-1 rounded">Mở thầu thành công</span></p>
+            <span class="block text-xs text-slate-400 mt-2">Hôm qua, 14:30</span>
+          </div>
+
+          <!-- Activity 3 -->
+          <div class="relative">
+            <span
+              class="absolute -left-[21px] top-1 w-3 h-3 bg-white border-2 border-orange-500 rounded-full shadow-sm"></span>
+            <p class="text-sm font-semibold text-slate-700">Trần Thị B <span class="font-normal text-slate-500">đã thêm
+                một nhiệm vụ mới</span></p>
+            <p class="text-sm text-slate-600 mt-1 italic border-l-2 border-orange-200 pl-2">"Đã gửi thông báo mời thầu
+              gói 1"</p>
+            <span class="block text-xs text-slate-400 mt-2">2 ngày trước</span>
+          </div>
+
+        </div>
+        <button
+          class="w-full mt-6 py-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-evnBlue hover:border-evnBlue transition-colors">
+          Xem lịch sử đầy đủ
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Extra Tracking Sections (Milestones, Risks, Docs) -->
+
+    <!-- Milestones / Roadmap -->
+    <div
+      class="mt-8 bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-lg p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-x-auto scrollbar-hide">
+      <div class="flex justify-between items-center mb-6 min-w-[700px]">
+        <h3 class="text-lg font-bold text-slate-800">Tiến độ Đấu thầu tổng thể</h3>
+        <button class="text-sm font-medium text-evnBlue hover:text-orange-600 transition-colors">Chi tiết
+          Roadmap</button>
+      </div>
+      <div class="relative min-w-[700px] py-4">
+        <!-- Connecting Line -->
+        <div class="absolute top-1/2 left-0 w-full h-1.5 bg-slate-100 -translate-y-1/2 rounded-full hidden md:block">
+        </div>
+        <div
+          class="absolute top-1/2 left-0 w-1/2 h-1.5 bg-gradient-to-r from-evnBlue to-blue-400 -translate-y-1/2 rounded-full hidden md:block">
+        </div>
+
+        <div class="grid grid-cols-4 gap-4 relative z-10">
+          <!-- Step 1: Done -->
+          <div class="flex flex-col items-center text-center px-2">
+            <div
+              class="w-12 h-12 rounded-full bg-evnBlue text-white flex items-center justify-center font-bold mb-3 shadow-lg shadow-blue-500/30 ring-4 ring-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h4 class="font-bold text-slate-800 text-sm">Lập Kế hoạch LCNT</h4>
+            <p class="text-xs text-slate-500 mt-1">15/05/2026</p>
+          </div>
+          <!-- Step 2: Done -->
+          <div class="flex flex-col items-center text-center px-2">
+            <div
+              class="w-12 h-12 rounded-full bg-evnBlue text-white flex items-center justify-center font-bold mb-3 shadow-lg shadow-blue-500/30 ring-4 ring-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h4 class="font-bold text-slate-800 text-sm">Lập HSMT/YC</h4>
+            <p class="text-xs text-slate-500 mt-1">20/06/2026</p>
+          </div>
+          <!-- Step 3: In Progress -->
+          <div class="flex flex-col items-center text-center px-2">
+            <div
+              class="w-12 h-12 rounded-full bg-white border-4 border-evnBlue text-evnBlue flex items-center justify-center font-bold mb-3 shadow-md ring-4 ring-white relative">
+              <span class="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-20 animate-ping"></span>
+              <span class="w-3 h-3 bg-evnBlue rounded-full"></span>
+            </div>
+            <h4 class="font-bold text-evnBlue text-sm">Phát hành HSMT</h4>
+            <p class="text-xs text-orange-600 font-medium mt-1">Đang thực hiện</p>
+          </div>
+          <!-- Step 4: Pending -->
+          <div class="flex flex-col items-center text-center px-2">
+            <div
+              class="w-12 h-12 rounded-full bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center font-bold mb-3 ring-4 ring-white">
+              4
+            </div>
+            <h4 class="font-bold text-slate-400 text-sm">Đấu thầu & Thi công</h4>
+            <p class="text-xs text-slate-400 mt-1">Dự kiến: Q4/2026</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Grid (Risks & Docs) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+
+      <!-- Risks & Issues -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-bold text-slate-800 flex items-center gap-3">
+            Quản lý Rủi ro & Vấn đề
+            <span class="bg-red-100 text-red-600 text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
+              2 Ưu tiên cao
+            </span>
+          </h3>
+          <button class="text-slate-400 hover:text-evnBlue transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <!-- Risk 1 -->
+          <div
+            class="flex items-start gap-3 p-4 rounded-xl border border-red-100 bg-red-50/50 hover:bg-red-50 transition-colors cursor-pointer">
+            <div class="mt-0.5 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-800 text-sm">Chậm giải phóng mặt bằng gói 4</h4>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">Dự án ĐMT Thác Mơ. Đang chờ quyết định đền bù từ
+                UBND Tỉnh. Nguy cơ ảnh hưởng tiến độ thi công chính.</p>
+            </div>
+          </div>
+          <!-- Risk 2 -->
+          <div
+            class="flex items-start gap-3 p-4 rounded-xl border border-orange-100 bg-orange-50/50 hover:bg-orange-50 transition-colors cursor-pointer">
+            <div class="mt-0.5 w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-600" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-800 text-sm">Thiếu hụt vật tư trạm biến áp</h4>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">Dự án Sông Bung 4. Nhà thầu báo cáo chậm giao hàng
+                2 tuần do thời tiết. Cần đôn đốc bộ phận cung ứng.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Documents -->
+      <div
+        class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-bold text-slate-800">Tài liệu & Báo cáo mới nhất</h3>
+          <button class="text-sm font-medium text-evnBlue hover:text-orange-600 transition-colors">Đến kho tài
+            liệu</button>
+        </div>
+        <div class="grid grid-cols-2 gap-4 flex-grow">
+          <!-- Doc 1 -->
+          <div
+            class="p-4 border border-slate-100 rounded-xl hover:bg-blue-50 hover:border-blue-100 cursor-pointer transition-all group">
+            <div class="flex items-center gap-3 mb-3">
+              <div
+                class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-slate-800 line-clamp-1 group-hover:text-evnBlue transition-colors">Báo
+                  cáo Q3.pdf</p>
+                <p class="text-[11px] text-slate-400 font-medium">2.4 MB</p>
+              </div>
+            </div>
+          </div>
+          <!-- Doc 2 -->
+          <div
+            class="p-4 border border-slate-100 rounded-xl hover:bg-blue-50 hover:border-blue-100 cursor-pointer transition-all group">
+            <div class="flex items-center gap-3 mb-3">
+              <div
+                class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-slate-800 line-clamp-1 group-hover:text-evnBlue transition-colors">Khảo
+                  sát ĐTM.xlsx</p>
+                <p class="text-[11px] text-slate-400 font-medium">1.1 MB</p>
+              </div>
+            </div>
+          </div>
+          <!-- Doc 3 -->
+          <div
+            class="p-4 border border-slate-100 rounded-xl hover:bg-blue-50 hover:border-blue-100 cursor-pointer transition-all group col-span-2 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-evnBlue group-hover:scale-110 transition-transform shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-slate-800 group-hover:text-evnBlue transition-colors">Quyết định phê
+                  duyệt dự án.doc</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Cập nhật 2 giờ trước bởi Admin</p>
+              </div>
+            </div>
+            <button
+              class="text-slate-400 hover:text-evnBlue transition-colors w-8 h-8 rounded-full hover:bg-blue-100 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+  <script src="/js/bid.js?v=<%= Date.now() %>"></script>
+</body>
+
+</html>

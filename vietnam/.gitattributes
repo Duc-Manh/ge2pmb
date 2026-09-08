@@ -1,0 +1,3 @@
+# GIT FLS file tracking configuration of this repository.
+# This dataset contains very large GIS dump files, so we use Git LFS to manage them.
+# See https://git-lfs.github.com/ for more information how to install and use Git LFS.

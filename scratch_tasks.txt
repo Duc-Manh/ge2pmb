@@ -1,0 +1,98 @@
+        <!-- Tasks Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Month Tasks -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-lg font-bold text-slate-800">Nhiệm vụ trong tháng này</h3>
+              <button class="text-sm font-medium text-evnBlue hover:text-orange-600 transition-colors">Xem tất cả</button>
+            </div>
+            <div class="space-y-4">
+              <!-- Task 1 -->
+              <div
+                class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-blue-50/50 transition-colors group cursor-pointer">
+                <input type="checkbox"
+                  class="mt-1 w-5 h-5 rounded border-slate-300 text-evnBlue focus:ring-evnBlue cursor-pointer">
+                <div class="flex-grow">
+                  <p class="font-semibold text-slate-700 group-hover:text-evnBlue transition-colors">Nộp báo cáo tiến độ tháng</p>
+                  <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1 font-medium text-slate-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      25/08/2026
+                    </span>
+                    <span>•</span>
+                    <span>NĐ Hải Phòng 3</span>
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-600 border border-white shadow-sm">
+                  B</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Week Tasks -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-lg font-bold text-slate-800">Nhiệm vụ trọng tâm tuần này</h3>
+              <button class="text-sm font-medium text-evnBlue hover:text-orange-600 transition-colors">Xem tất cả</button>
+            </div>
+            <div class="space-y-4">
+              <!-- Task 1 -->
+              <div
+                class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-blue-50/50 transition-colors group cursor-pointer">
+                <input type="checkbox"
+                  class="mt-1 w-5 h-5 rounded border-slate-300 text-evnBlue focus:ring-evnBlue cursor-pointer">
+                <div class="flex-grow">
+                  <p class="font-semibold text-slate-700 group-hover:text-evnBlue transition-colors">Duyệt hồ sơ mời thầu
+                    gói số 4</p>
+                  <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1 text-red-500 font-medium">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Hôm nay
+                    </span>
+                    <span>•</span>
+                    <span>Thủy điện Sông Bung 4</span>
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-xs font-bold text-evnOrange border border-white shadow-sm">
+                  H</div>
+              </div>
+
+              <!-- Task 2 -->
+              <div
+                class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-blue-50/50 transition-colors group cursor-pointer">
+                <input type="checkbox"
+                  class="mt-1 w-5 h-5 rounded border-slate-300 text-evnBlue focus:ring-evnBlue cursor-pointer">
+                <div class="flex-grow">
+                  <p class="font-semibold text-slate-700 group-hover:text-evnBlue transition-colors">Báo cáo đánh giá tác
+                    động môi trường (ĐTM)</p>
+                  <div class="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                    <span class="flex items-center gap-1 font-medium">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      12/08/2026
+                    </span>
+                    <span>•</span>
+                    <span>NĐ Hải Phòng 3</span>
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-evnBlue border border-white shadow-sm">
+                  T</div>
+              </div>
+            </div>
+          </div>
+        </div>
